@@ -640,7 +640,7 @@ def _tabela_cruzada(
     matriz: dict[tuple[str, str], int],
 ) -> str:
     th = "<th>Situação</th>" + "".join(f"<th>{_esc(c)}</th>" for c in colunas)
-    th += '<th class="num">Σ</th>'
+    th += '<th class="num">Total</th>'
     body = ""
     for r in linhas_rotulo:
         tot = sum(matriz.get((r, c), 0) for c in colunas)
@@ -963,7 +963,49 @@ def _barras_horizontais(
     return f'<section class="block"><h2>{_esc(titulo)}</h2><div class="bars">{rows}</div></section>'
 
 
-def _html_fragmento_relatorio(r: Relatorio) -> str:
+def _barras_verticais(
+    titulo: str, itens: list[tuple[str, int]], cor: str
+) -> str:
+    if not itens:
+        return f'<section class="block"><h2>{_esc(titulo)}</h2><p class="muted">Sem dados.</p></section>'
+    mx = max(n for _, n in itens) or 1
+    cols = ""
+    for label, n in itens:
+        pct = 100.0 * n / mx
+        cols += (
+            '<div class="vbar-col">'
+            f'<div class="vbar-val">{_fmt_int(n)}</div>'
+            f'<div class="vbar-track"><div class="vbar-fill" style="height:{pct:.1f}%;background:{cor}"></div></div>'
+            f'<div class="vbar-label">{_esc(label)}</div>'
+            "</div>"
+        )
+    return f'<section class="block"><h2>{_esc(titulo)}</h2><div class="vbars">{cols}</div></section>'
+
+
+def _rotulo_mes_pt(chave: str) -> str:
+    meses = {
+        "01": "jan",
+        "02": "fev",
+        "03": "mar",
+        "04": "abr",
+        "05": "mai",
+        "06": "jun",
+        "07": "jul",
+        "08": "ago",
+        "09": "set",
+        "10": "out",
+        "11": "nov",
+        "12": "dez",
+    }
+    s = (chave or "").strip()
+    if len(s) == 7 and s[4] == "-":
+        ano, mes = s.split("-", 1)
+        if ano.isdigit() and mes in meses:
+            return f"{meses[mes]}/{ano}"
+    return s
+
+
+def _html_fragmento_relatorio(r: Relatorio, *, exito_layout: bool = False) -> str:
     faixas = sorted(r.por_faixa.keys())
     linhas_faixa: list[list[str]] = []
     for f in faixas:
@@ -996,7 +1038,39 @@ def _html_fragmento_relatorio(r: Relatorio) -> str:
         [f"Parados ≥ {d} dias (último login ou atividade)", _fmt_int(n)]
         for d, n in r.parados_dias
     ]
-    bloco_mapa = f"""
+    mat_carga_situacao = {
+        (carga, situacao): n
+        for (situacao, carga), n in r.mat_situacao_carga.items()
+    }
+    card_carga = (
+        _tabela_cruzada(
+            "Carga horária (h) × situação",
+            r.cols_carga,
+            r.situacoes,
+            mat_carga_situacao,
+        )
+        if exito_layout
+        else _tabela_cruzada(
+            "Situação × carga horária (h)",
+            r.situacoes,
+            r.cols_carga,
+            r.mat_situacao_carga,
+        )
+    )
+    bloco_carga_inicio = "" if exito_layout else card_carga
+    bloco_carga_final = card_carga if exito_layout else ""
+    card_situacao_faixa = _tabela_cruzada(
+        "Situação × faixa de progresso",
+        r.situacoes,
+        r.cols_faixa_pct,
+        r.mat_situacao_faixa,
+    )
+    bloco_situacao_faixa_inicio = "" if exito_layout else card_situacao_faixa
+    bloco_situacao_faixa_final = card_situacao_faixa if exito_layout else ""
+    bloco_mapa = (
+        ""
+        if exito_layout
+        else f"""
     <div class="colunas-2">
       {_html_bloco_mapa_visual(r)}
       <div class="coluna-stack">
@@ -1004,6 +1078,7 @@ def _html_fragmento_relatorio(r: Relatorio) -> str:
       </div>
     </div>
     """
+    )
 
     return f"""
     <header class="cabecalho-relatorio">
@@ -1026,12 +1101,12 @@ def _html_fragmento_relatorio(r: Relatorio) -> str:
         <h2>Distribuição por faixa de progresso (10%)</h2>
         {_tabela_simples(["Faixa", "Pessoas", "% do total"], linhas_faixa)}
       </section>
-      {_barras_horizontais("Faixas de progresso (visual)", [(f"{f}%", r.por_faixa[f]) for f in faixas], "var(--accent)")}
+      {_barras_verticais("Faixas de progresso (visual)", [(f"{f}%", r.por_faixa[f]) for f in faixas], "var(--accent)")}
     </div>
 
     <div class="colunas-2">
-      {_tabela_cruzada("Situação × faixa de progresso", r.situacoes, r.cols_faixa_pct, r.mat_situacao_faixa)}
-      {_tabela_cruzada("Situação × carga horária (h)", r.situacoes, r.cols_carga, r.mat_situacao_carga)}
+      {bloco_situacao_faixa_inicio}
+      {bloco_carga_inicio}
     </div>
 
     <div class="colunas-2">
@@ -1046,11 +1121,13 @@ def _html_fragmento_relatorio(r: Relatorio) -> str:
     </div>
 
     <div class="colunas-2">
-      {_barras_horizontais("Pessoas por mês do último login", r.serie_login_mes, "var(--accent2)")}
-      {_barras_horizontais("Pessoas por mês da última atividade", r.serie_atividade_mes, "var(--warn)")}
+      {_barras_verticais("Pessoas por mês do último login", [(_rotulo_mes_pt(m), n) for m, n in r.serie_login_mes], "var(--accent2)")}
+      {_barras_verticais("Pessoas por mês da última atividade", [(_rotulo_mes_pt(m), n) for m, n in r.serie_atividade_mes], "var(--warn)")}
     </div>
 
     {bloco_mapa}
+    {bloco_situacao_faixa_final}
+    {bloco_carga_final}
     """
 
 
@@ -1093,7 +1170,11 @@ def escrever_html_abas(
             f'aria-controls="{panel_id}" aria-selected="{sel}" data-panel="{slug}">{_esc(label)}</button>'
         )
         active = " is-active" if i == 0 else ""
-        inner = _html_fragmento_relatorio(rel) if rel is not None else _html_sem_csv_origem(label, csv_esperado)
+        inner = (
+            _html_fragmento_relatorio(rel, exito_layout=(slug == "instituto-exito"))
+            if rel is not None
+            else _html_sem_csv_origem(label, csv_esperado)
+        )
         paineis.append(
             f'<div class="tab-panel{active}" role="tabpanel" id="{panel_id}" '
             f'aria-labelledby="tab-{slug}" tabindex="0">{inner}</div>'
@@ -1120,6 +1201,30 @@ def escrever_html_abas(
       --accent2: #22c55e;
       --warn: #f59e0b;
       --shadow-card: 0 4px 22px rgba(0, 0, 0, 0.32);
+      --tab-bg: #1f2937;
+      --tab-text: #e7eef8;
+      --tab-hover-bg: #273449;
+      --tab-border: #3b4a61;
+      --tab-active-ring: #3d8bfd;
+    }}
+    @media (prefers-color-scheme: light) {{
+      :root {{
+        --bg: #f3f6fb;
+        --card: #ffffff;
+        --panel: #f8fafc;
+        --border: #d6deea;
+        --text: #0f172a;
+        --muted: #475569;
+        --accent: #2563eb;
+        --accent2: #16a34a;
+        --warn: #d97706;
+        --shadow-card: 0 4px 18px rgba(15, 23, 42, 0.08);
+        --tab-bg: #ffffff;
+        --tab-text: #111827;
+        --tab-hover-bg: #f8fafc;
+        --tab-border: #cbd5e1;
+        --tab-active-ring: #2563eb;
+      }}
     }}
     * {{ box-sizing: border-box; }}
     body {{
@@ -1285,6 +1390,55 @@ def escrever_html_abas(
     }}
     .bar-fill {{ height: 100%; border-radius: 6px; min-width: 2px; }}
     .bar-val {{ text-align: right; font-variant-numeric: tabular-nums; }}
+    .vbars {{
+      display: flex;
+      gap: 0.8rem;
+      align-items: end;
+      width: 100%;
+      min-height: 460px;
+      overflow-x: auto;
+      padding: 0.25rem 0.15rem 0.35rem;
+    }}
+    .vbar-col {{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.45rem;
+      flex: 1 0 78px;
+      min-width: 78px;
+    }}
+    .vbar-val {{
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+      line-height: 1.1;
+    }}
+    .vbar-track {{
+      width: 100%;
+      max-width: 100%;
+      height: 380px;
+      background: color-mix(in srgb, var(--muted) 22%, transparent);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: end;
+      overflow: hidden;
+    }}
+    .vbar-fill {{
+      width: 100%;
+      border-radius: 6px 6px 0 0;
+      min-height: 2px;
+      box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.15) inset;
+    }}
+    .vbar-label {{
+      font-size: 0.78rem;
+      color: var(--text);
+      text-align: center;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }}
     .muted {{ color: var(--muted); }}
     .mapa-estatico-wrap {{
       max-width: 100%;
@@ -1341,6 +1495,7 @@ def escrever_html_abas(
     }}
     .tab-bar {{
       display: flex;
+      justify-content: center;
       flex-wrap: wrap;
       gap: 0.5rem;
       margin-bottom: 1.35rem;
@@ -1354,23 +1509,27 @@ def escrever_html_abas(
       appearance: none;
       font: inherit;
       cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--panel);
-      color: var(--muted);
-      padding: 0.55rem 1.1rem;
+      border: 1px solid var(--tab-border);
+      background: var(--tab-bg);
+      color: var(--tab-text);
+      min-width: 240px;
+      padding: 0.95rem 1.5rem;
       border-radius: 8px;
       font-weight: 600;
-      font-size: 0.92rem;
+      font-size: 1.2rem;
+      text-align: center;
       transition: background 0.15s, color 0.15s, border-color 0.15s;
     }}
     .tab-btn:hover {{
-      color: var(--text);
+      color: var(--tab-text);
       border-color: var(--accent);
+      background: var(--tab-hover-bg);
     }}
     .tab-btn[aria-selected="true"] {{
-      background: var(--accent);
-      color: #fff;
+      background: var(--tab-bg);
+      color: var(--tab-text);
       border-color: var(--accent);
+      box-shadow: inset 0 0 0 2px var(--tab-active-ring);
     }}
     .tab-panel {{
       display: none;
@@ -1393,13 +1552,19 @@ def escrever_html_abas(
         background: #fff;
         border-color: #ccc;
       }}
-      .kpi, table.data, .bar-track {{ border-color: #ccc; }}
+      .kpi, table.data, .bar-track, .vbar-track {{ border-color: #ccc; }}
       .kpi-val {{ color: #06c; }}
       .colunas-2 {{ grid-template-columns: 1fr; }}
       .cabecalho-relatorio {{ grid-template-columns: 1fr; }}
       .tab-bar {{ display: none; }}
       .tab-panel {{ display: block !important; }}
       .tab-panel + .tab-panel {{ page-break-before: always; }}
+    }}
+    @media (prefers-color-scheme: light) {{
+      table.data thead th {{ background: #e5e7eb; }}
+      table.data tbody tr:hover {{ background: #f1f5f9; }}
+      table.data tfoot td {{ background: #e2e8f0; }}
+      table.data th, table.data td {{ border-bottom: 1px solid #d1d5db; }}
     }}
   </style>
 </head>
