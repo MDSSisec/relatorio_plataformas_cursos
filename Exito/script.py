@@ -16,6 +16,7 @@ SCRIPT_PRINCIPAL = BASE_DIR / "GoKursos" / "script.py"
 CSV_DESTINO = EXITO_DIR / "progress_instituto_exito.csv"
 COLUNAS_DESTINO = [
     "NOME",
+    "EMAIL",
     "PROGRESSO",
     "SITUACAO",
     "CARGA_HORARIA",
@@ -118,6 +119,12 @@ def _converter_xlsx_exito_para_csv(caminho_xlsx: Path, caminho_csv: Path) -> Non
                 i = idx[col]
                 return row[i].strip() if i < len(row) and row[i] is not None else ""
 
+            def g_opt(col: str) -> str:
+                i = idx.get(col)
+                if i is None:
+                    return ""
+                return row[i].strip() if i < len(row) and row[i] is not None else ""
+
             nome = g("ALUNO")
             if not nome:
                 continue
@@ -131,6 +138,7 @@ def _converter_xlsx_exito_para_csv(caminho_xlsx: Path, caminho_csv: Path) -> Non
             w.writerow(
                 {
                     "NOME": nome,
+                    "EMAIL": g_opt("E-MAIL"),
                     "PROGRESSO": f"{progresso_num:.2f}".rstrip("0").rstrip("."),
                     "SITUACAO": situacao,
                     "CARGA_HORARIA": g("CURSO"),

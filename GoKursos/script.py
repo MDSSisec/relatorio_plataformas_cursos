@@ -214,6 +214,7 @@ class Relatorio:
     por_uf: dict[str, int]
     ddd_nao_mapeado: int
     contatos_faixa_80: list[tuple[str, str, str]]
+    concluintes_recentes: list[tuple[str, str, str]]
 
 
 def _parse_progresso(raw: str | None) -> float | None:
@@ -411,6 +412,22 @@ def analisar(caminho_csv: Path) -> Relatorio:
                 )
             )
 
+    concluintes_recentes: list[tuple[str, str, str]] = []
+    concluintes_base: list[tuple[datetime, str, str]] = []
+    for nome, a in por_nome.items():
+        if a.max_progresso < PROGRESSO_COMPLETO or a.max_login is None:
+            continue
+        concluintes_base.append(
+            (
+                a.max_login,
+                nome,
+                a.email or "—",
+            )
+        )
+    concluintes_base.sort(key=lambda item: item[0], reverse=True)
+    for dt, nome, email in concluintes_base[:10]:
+        concluintes_recentes.append((nome, email, dt.strftime("%d/%m/%Y %H:%M")))
+
     return Relatorio(
         gerado_em=datetime.now(),
         arquivo_csv=caminho_csv.name,
@@ -436,6 +453,7 @@ def analisar(caminho_csv: Path) -> Relatorio:
         por_uf=dict(sorted(por_uf.items())),
         ddd_nao_mapeado=ddd_nao_mapeado,
         contatos_faixa_80=contatos_faixa_80,
+        concluintes_recentes=concluintes_recentes,
     )
 
 
@@ -670,8 +688,11 @@ def _tabela_cruzada(
     linhas_rotulo: list[str],
     colunas: list[str],
     matriz: dict[tuple[str, str], int],
+    rotulo_linha: str = "Situação",
 ) -> str:
-    th = "<th>Situação</th>" + "".join(f"<th>{_esc(c)}</th>" for c in colunas)
+    th = f"<th>{_esc(rotulo_linha)}</th>" + "".join(
+        f"<th>{_esc(c)}</th>" for c in colunas
+    )
     th += '<th class="num">Total</th>'
     body = ""
     for r in linhas_rotulo:
@@ -1080,6 +1101,7 @@ def _html_fragmento_relatorio(r: Relatorio, *, exito_layout: bool = False) -> st
             r.cols_carga,
             r.situacoes,
             mat_carga_situacao,
+            rotulo_linha="Turmas",
         )
         if exito_layout
         else _tabela_cruzada(
@@ -1106,6 +1128,15 @@ def _html_fragmento_relatorio(r: Relatorio, *, exito_layout: bool = False) -> st
         <section class="block">
           <h2>Pessoas na faixa de 80% ({_fmt_int(len(r.contatos_faixa_80))})</h2>
           {_tabela_simples(["Nome", "E-mail", "Telefone"], linhas_80)}
+        </section>
+        """
+    bloco_concluintes_recentes = ""
+    if exito_layout:
+        linhas_concluintes = [list(item) for item in r.concluintes_recentes]
+        bloco_concluintes_recentes = f"""
+        <section class="block">
+          <h2>Últimos 10 concluintes (mais recentes)</h2>
+          {_tabela_simples(["Nome", "E-mail", "Data"], linhas_concluintes)}
         </section>
         """
     bloco_mapa = (
@@ -1146,6 +1177,7 @@ def _html_fragmento_relatorio(r: Relatorio, *, exito_layout: bool = False) -> st
     </div>
 
     {bloco_contatos_faixa_80}
+    {bloco_concluintes_recentes}
 
     <div class="colunas-2">
       {bloco_situacao_faixa_inicio}
