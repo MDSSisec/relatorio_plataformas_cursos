@@ -360,6 +360,23 @@
       border-radius: 6px;
       font-size: 0.9rem;
     }
+    .contatos-80-row-extra { display: none; }
+    .contatos-80-toggle {
+      margin-top: 0.8rem;
+      border: 1px solid #2563eb;
+      background: #2563eb;
+      color: #ffffff;
+      padding: 0.5rem 0.85rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .contatos-80-toggle:hover {
+      border-color: #1d4ed8;
+      background: #1d4ed8;
+    }
     @media print {
       body { background: #fff; color: #111; }
       .cabecalho-relatorio, .kpi-deck, .block {
@@ -375,6 +392,41 @@
       .tab-panel { display: block !important; }
       .tab-panel + .tab-panel { page-break-before: always; }
     }
+    @media (max-width: 768px) {
+      table.data.contatos-80 thead {
+        display: none;
+      }
+      table.data.contatos-80,
+      table.data.contatos-80 tbody,
+      table.data.contatos-80 tr,
+      table.data.contatos-80 td {
+        display: block;
+        width: 100%;
+      }
+      table.data.contatos-80 tr {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin-bottom: 0.75rem;
+        background: var(--panel);
+        overflow: hidden;
+      }
+      table.data.contatos-80 td {
+        border-bottom: 1px solid var(--border);
+        padding: 0.6rem 0.8rem;
+      }
+      table.data.contatos-80 td:last-child {
+        border-bottom: 0;
+      }
+      table.data.contatos-80 td::before {
+        content: attr(data-label);
+        display: block;
+        font-size: 0.74rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.2rem;
+      }
+    }
     @media (prefers-color-scheme: light) {
       table.data thead th { background: #e5e7eb; }
       table.data tbody tr:hover { background: #f1f5f9; }
@@ -389,7 +441,7 @@
     <div class="tab-panel is-active" role="tabpanel" id="panel-gokursos" aria-labelledby="tab-gokursos" tabindex="0">
     <header class="cabecalho-relatorio">
       <h1>Relatório de progresso educacional</h1>
-      <p class="meta-linha">Arquivo: progress_130426162242.csv · Gerado em 14/04/2026 10:24 · Critério de conclusão: ≥ 100%</p>
+      <p class="meta-linha">Arquivo: progress_130426162242.csv · Gerado em 14/04/2026 10:49 · Critério de conclusão: ≥ 100%</p>
       <h2 class="titulo-notas">Notas metodológicas</h2>
       <ul class="lista-notas">
         <li>Uma pessoa = um nome único no CSV; várias linhas do mesmo nome são consolidadas.</li>
@@ -422,7 +474,7 @@
     
         <section class="block">
           <h2>Pessoas na faixa de 80% (22)</h2>
-          <table class="data"><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th></tr></thead><tbody><tr><td>areis2590</td><td>areis2590@gmail.com</td><td>87981043314</td></tr><tr><td>c314975</td><td>c314975@gmail.com</td><td>74981502125</td></tr><tr><td>CAIO WILIAM DE SOUZA SANTOS</td><td>cwsouza03@gmail.com</td><td>71991926575</td></tr><tr><td>celsocosta.tec</td><td>celsocosta.tec@gmail.com</td><td>81988691870</td></tr><tr><td>Enzo Marques Campos</td><td>enzomarquesc@gmail.com</td><td>32999649030</td></tr><tr><td>gabydias786</td><td>gabydias786@gmail.com</td><td>73991080529</td></tr><tr><td>Henriquemateus888</td><td>henriquemateus888@gmail.com</td><td>64981113243</td></tr><tr><td>Isaac Assuncao Dantas</td><td>rejanedantas11@gmail.com</td><td>61992663627</td></tr><tr><td>Italoruan842</td><td>Italoruan842@icloud.com</td><td>74991476668</td></tr><tr><td>Je974874</td><td>Je974874@gmail.com</td><td>71984368183</td></tr><tr><td>João Gabriel</td><td>Tjoao4925@gmail.com</td><td>85987207267</td></tr><tr><td>limagrazi520</td><td>limagrazi520@gmail.com</td><td>74999813347</td></tr><tr><td>lucasorigenspremium</td><td>lucasorigenspremium@gmail.com</td><td>82988375186</td></tr><tr><td>m.me.marina.franca.73113</td><td>m.me.marina.franca.73113@gmail.com</td><td>85991207695</td></tr><tr><td>madupessoa2007</td><td>madupessoa2007@gmail.com</td><td>85991502212</td></tr><tr><td>mariaguimaraes869</td><td>mariaguimaraes869@gmail.com</td><td>—</td></tr><tr><td>miele_reis</td><td>miele_reis@hotmail.com</td><td>92993184130</td></tr><tr><td>Milenaalvespfv</td><td>mcarneiroalves@gmail.com</td><td>41989002396</td></tr><tr><td>oliveiraiuri629</td><td>oliveiraiuri629@gmail.com</td><td>75992099200</td></tr><tr><td>paulohenriquele7</td><td>paulohenriquele7@gmail.com</td><td>13981552446</td></tr><tr><td>Rayane Climaco</td><td>ray.climaco@gmail.com</td><td>71993310576</td></tr><tr><td>Reynaldsousalima</td><td>Reynaldsousalima@gmail.com</td><td>88981921556</td></tr></tbody></table>
+          <table class="data contatos-80"><thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th></tr></thead><tbody><tr class=""><td data-label="Nome">areis2590</td><td data-label="E-mail">areis2590@gmail.com</td><td data-label="Telefone">87981043314</td></tr><tr class=""><td data-label="Nome">c314975</td><td data-label="E-mail">c314975@gmail.com</td><td data-label="Telefone">74981502125</td></tr><tr class=""><td data-label="Nome">CAIO WILIAM DE SOUZA SANTOS</td><td data-label="E-mail">cwsouza03@gmail.com</td><td data-label="Telefone">71991926575</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">celsocosta.tec</td><td data-label="E-mail">celsocosta.tec@gmail.com</td><td data-label="Telefone">81988691870</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">Enzo Marques Campos</td><td data-label="E-mail">enzomarquesc@gmail.com</td><td data-label="Telefone">32999649030</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">gabydias786</td><td data-label="E-mail">gabydias786@gmail.com</td><td data-label="Telefone">73991080529</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">Henriquemateus888</td><td data-label="E-mail">henriquemateus888@gmail.com</td><td data-label="Telefone">64981113243</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">Isaac Assuncao Dantas</td><td data-label="E-mail">rejanedantas11@gmail.com</td><td data-label="Telefone">61992663627</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">Italoruan842</td><td data-label="E-mail">Italoruan842@icloud.com</td><td data-label="Telefone">74991476668</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">Je974874</td><td data-label="E-mail">Je974874@gmail.com</td><td data-label="Telefone">71984368183</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">João Gabriel</td><td data-label="E-mail">Tjoao4925@gmail.com</td><td data-label="Telefone">85987207267</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">limagrazi520</td><td data-label="E-mail">limagrazi520@gmail.com</td><td data-label="Telefone">74999813347</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">lucasorigenspremium</td><td data-label="E-mail">lucasorigenspremium@gmail.com</td><td data-label="Telefone">82988375186</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">m.me.marina.franca.73113</td><td data-label="E-mail">m.me.marina.franca.73113@gmail.com</td><td data-label="Telefone">85991207695</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">madupessoa2007</td><td data-label="E-mail">madupessoa2007@gmail.com</td><td data-label="Telefone">85991502212</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">mariaguimaraes869</td><td data-label="E-mail">mariaguimaraes869@gmail.com</td><td data-label="Telefone">—</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">miele_reis</td><td data-label="E-mail">miele_reis@hotmail.com</td><td data-label="Telefone">92993184130</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">Milenaalvespfv</td><td data-label="E-mail">mcarneiroalves@gmail.com</td><td data-label="Telefone">41989002396</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">oliveiraiuri629</td><td data-label="E-mail">oliveiraiuri629@gmail.com</td><td data-label="Telefone">75992099200</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">paulohenriquele7</td><td data-label="E-mail">paulohenriquele7@gmail.com</td><td data-label="Telefone">13981552446</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">Rayane Climaco</td><td data-label="E-mail">ray.climaco@gmail.com</td><td data-label="Telefone">71993310576</td></tr><tr class="contatos-80-row-extra"><td data-label="Nome">Reynaldsousalima</td><td data-label="E-mail">Reynaldsousalima@gmail.com</td><td data-label="Telefone">88981921556</td></tr></tbody></table><button type="button" class="contatos-80-toggle" aria-expanded="false">Mostrar mais</button>
         </section>
         
     
@@ -530,7 +582,7 @@
     </div><div class="tab-panel" role="tabpanel" id="panel-instituto-exito" aria-labelledby="tab-instituto-exito" tabindex="0">
     <header class="cabecalho-relatorio">
       <h1>Relatório de progresso educacional</h1>
-      <p class="meta-linha">Arquivo: progress_instituto_exito.csv · Gerado em 14/04/2026 10:24 · Critério de conclusão: ≥ 100%</p>
+      <p class="meta-linha">Arquivo: progress_instituto_exito.csv · Gerado em 14/04/2026 10:49 · Critério de conclusão: ≥ 100%</p>
       <h2 class="titulo-notas">Notas metodológicas</h2>
       <ul class="lista-notas">
         <li>Uma pessoa = um nome único no CSV; várias linhas do mesmo nome são consolidadas.</li>
@@ -611,6 +663,27 @@
       btn.addEventListener("click", function () {
         show(btn.getAttribute("data-panel"));
       });
+    });
+
+    var toggles = document.querySelectorAll(".contatos-80-toggle");
+    toggles.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var sec = btn.closest(".block");
+        if (!sec) return;
+        var extras = sec.querySelectorAll(".contatos-80-row-extra");
+        var open = btn.getAttribute("aria-expanded") === "true";
+        extras.forEach(function (tr) {
+          tr.style.display = open ? "none" : "";
+        });
+        btn.setAttribute("aria-expanded", open ? "false" : "true");
+        btn.textContent = open ? "Mostrar mais" : "Mostrar menos";
+      });
+    });
+
+    // Garante estado inicial recolhido também no mobile.
+    var extrasInit = document.querySelectorAll(".contatos-80-row-extra");
+    extrasInit.forEach(function (tr) {
+      tr.style.display = "none";
     });
   })();
   </script>

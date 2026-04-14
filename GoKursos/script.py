@@ -683,6 +683,36 @@ def _tabela_simples(cabecalhos: list[str], linhas: list[list[str]]) -> str:
     return f'<table class="data"><thead><tr>{th}</tr></thead><tbody>{body}</tbody></table>'
 
 
+def _tabela_contatos_faixa_80(linhas: list[list[str]]) -> str:
+    cabecalhos = ["Nome", "E-mail", "Telefone"]
+    th = "".join(f"<th>{_esc(h)}</th>" for h in cabecalhos)
+    body = ""
+    for i, row in enumerate(linhas):
+        nome = row[0] if len(row) > 0 else "—"
+        email = row[1] if len(row) > 1 else "—"
+        telefone = row[2] if len(row) > 2 else "—"
+        extra_cls = " contatos-80-row-extra" if i >= 3 else ""
+        body += (
+            f'<tr class="{extra_cls.strip()}">'
+            f'<td data-label="Nome">{_esc(nome)}</td>'
+            f'<td data-label="E-mail">{_esc(email)}</td>'
+            f'<td data-label="Telefone">{_esc(telefone)}</td>'
+            "</tr>"
+        )
+    tabela = (
+        f'<table class="data contatos-80"><thead><tr>{th}</tr></thead>'
+        f"<tbody>{body}</tbody></table>"
+    )
+    if len(linhas) <= 3:
+        return tabela
+    botao = (
+        '<button type="button" class="contatos-80-toggle" aria-expanded="false">'
+        "Mostrar mais"
+        "</button>"
+    )
+    return tabela + botao
+
+
 def _tabela_cruzada(
     titulo_secao: str,
     linhas_rotulo: list[str],
@@ -1127,7 +1157,7 @@ def _html_fragmento_relatorio(r: Relatorio, *, exito_layout: bool = False) -> st
         bloco_contatos_faixa_80 = f"""
         <section class="block">
           <h2>Pessoas na faixa de 80% ({_fmt_int(len(r.contatos_faixa_80))})</h2>
-          {_tabela_simples(["Nome", "E-mail", "Telefone"], linhas_80)}
+          {_tabela_contatos_faixa_80(linhas_80)}
         </section>
         """
     bloco_concluintes_recentes = ""
@@ -1620,6 +1650,23 @@ def escrever_html_abas(
       border-radius: 6px;
       font-size: 0.9rem;
     }}
+    .contatos-80-row-extra {{ display: none; }}
+    .contatos-80-toggle {{
+      margin-top: 0.8rem;
+      border: 1px solid #2563eb;
+      background: #2563eb;
+      color: #ffffff;
+      padding: 0.5rem 0.85rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }}
+    .contatos-80-toggle:hover {{
+      border-color: #1d4ed8;
+      background: #1d4ed8;
+    }}
     @media print {{
       body {{ background: #fff; color: #111; }}
       .cabecalho-relatorio, .kpi-deck, .block {{
@@ -1634,6 +1681,41 @@ def escrever_html_abas(
       .tab-bar {{ display: none; }}
       .tab-panel {{ display: block !important; }}
       .tab-panel + .tab-panel {{ page-break-before: always; }}
+    }}
+    @media (max-width: 768px) {{
+      table.data.contatos-80 thead {{
+        display: none;
+      }}
+      table.data.contatos-80,
+      table.data.contatos-80 tbody,
+      table.data.contatos-80 tr,
+      table.data.contatos-80 td {{
+        display: block;
+        width: 100%;
+      }}
+      table.data.contatos-80 tr {{
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin-bottom: 0.75rem;
+        background: var(--panel);
+        overflow: hidden;
+      }}
+      table.data.contatos-80 td {{
+        border-bottom: 1px solid var(--border);
+        padding: 0.6rem 0.8rem;
+      }}
+      table.data.contatos-80 td:last-child {{
+        border-bottom: 0;
+      }}
+      table.data.contatos-80 td::before {{
+        content: attr(data-label);
+        display: block;
+        font-size: 0.74rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.2rem;
+      }}
     }}
     @media (prefers-color-scheme: light) {{
       table.data thead th {{ background: #e5e7eb; }}
@@ -1665,6 +1747,27 @@ def escrever_html_abas(
       btn.addEventListener("click", function () {{
         show(btn.getAttribute("data-panel"));
       }});
+    }});
+
+    var toggles = document.querySelectorAll(".contatos-80-toggle");
+    toggles.forEach(function (btn) {{
+      btn.addEventListener("click", function () {{
+        var sec = btn.closest(".block");
+        if (!sec) return;
+        var extras = sec.querySelectorAll(".contatos-80-row-extra");
+        var open = btn.getAttribute("aria-expanded") === "true";
+        extras.forEach(function (tr) {{
+          tr.style.display = open ? "none" : "";
+        }});
+        btn.setAttribute("aria-expanded", open ? "false" : "true");
+        btn.textContent = open ? "Mostrar mais" : "Mostrar menos";
+      }});
+    }});
+
+    // Garante estado inicial recolhido também no mobile.
+    var extrasInit = document.querySelectorAll(".contatos-80-row-extra");
+    extrasInit.forEach(function (tr) {{
+      tr.style.display = "none";
     }});
   }})();
   </script>
