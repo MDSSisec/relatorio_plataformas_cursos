@@ -149,6 +149,9 @@ class AgregadoPessoa:
     max_atividade: datetime | None = None
     teve_login_preenchido: bool = False
     ddd: str | None = None
+    email: str = ""
+    telefone_contato: str = ""
+    ref_progresso_contato: float = -1.0
 
     def atualizar_melhor_progresso(
         self, progresso: float, situacao: str, carga: str
@@ -166,6 +169,21 @@ class AgregadoPessoa:
     def normalizar_progresso(self) -> None:
         if self.max_progresso < 0:
             self.max_progresso = 0.0
+
+    def atualizar_contato(
+        self, progresso: float | None, email: str | None, telefone: str | None
+    ) -> None:
+        em = (email or "").strip()
+        tel = (telefone or "").strip()
+        if progresso is not None and progresso > self.ref_progresso_contato:
+            self.ref_progresso_contato = progresso
+            self.email = em
+            self.telefone_contato = tel
+            return
+        if not self.email and em:
+            self.email = em
+        if not self.telefone_contato and tel:
+            self.telefone_contato = tel
 
 
 @dataclass
@@ -195,6 +213,7 @@ class Relatorio:
     sem_ddd: int
     por_uf: dict[str, int]
     ddd_nao_mapeado: int
+    contatos_faixa_80: list[tuple[str, str, str]]
 
 
 def _parse_progresso(raw: str | None) -> float | None:
@@ -268,6 +287,7 @@ def analisar(caminho_csv: Path) -> Relatorio:
                 continue
             agg = por_nome[nome]
             p = _parse_progresso(row.get("PROGRESSO"))
+            agg.atualizar_contato(p, row.get("EMAIL"), row.get("TELEFONE"))
             if p is not None:
                 agg.atualizar_melhor_progresso(
                     p,
@@ -380,6 +400,17 @@ def analisar(caminho_csv: Path) -> Relatorio:
         else:
             ddd_nao_mapeado += n
 
+    contatos_faixa_80: list[tuple[str, str, str]] = []
+    for nome, a in sorted(por_nome.items(), key=lambda item: item[0].lower()):
+        if _faixa_dez_porcento(a.max_progresso) == 80:
+            contatos_faixa_80.append(
+                (
+                    nome,
+                    a.email or "—",
+                    a.telefone_contato or "—",
+                )
+            )
+
     return Relatorio(
         gerado_em=datetime.now(),
         arquivo_csv=caminho_csv.name,
@@ -404,6 +435,7 @@ def analisar(caminho_csv: Path) -> Relatorio:
         sem_ddd=sem_ddd,
         por_uf=dict(sorted(por_uf.items())),
         ddd_nao_mapeado=ddd_nao_mapeado,
+        contatos_faixa_80=contatos_faixa_80,
     )
 
 
@@ -1067,6 +1099,15 @@ def _html_fragmento_relatorio(r: Relatorio, *, exito_layout: bool = False) -> st
     )
     bloco_situacao_faixa_inicio = "" if exito_layout else card_situacao_faixa
     bloco_situacao_faixa_final = card_situacao_faixa if exito_layout else ""
+    bloco_contatos_faixa_80 = ""
+    if not exito_layout:
+        linhas_80 = [list(item) for item in r.contatos_faixa_80]
+        bloco_contatos_faixa_80 = f"""
+        <section class="block">
+          <h2>Pessoas na faixa de 80% ({_fmt_int(len(r.contatos_faixa_80))})</h2>
+          {_tabela_simples(["Nome", "E-mail", "Telefone"], linhas_80)}
+        </section>
+        """
     bloco_mapa = (
         ""
         if exito_layout
@@ -1103,6 +1144,8 @@ def _html_fragmento_relatorio(r: Relatorio, *, exito_layout: bool = False) -> st
       </section>
       {_barras_verticais("Faixas de progresso (visual)", [(f"{f}%", r.por_faixa[f]) for f in faixas], "var(--accent)")}
     </div>
+
+    {bloco_contatos_faixa_80}
 
     <div class="colunas-2">
       {bloco_situacao_faixa_inicio}
