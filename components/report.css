@@ -354,6 +354,7 @@ table.data tfoot td { background: #1e2838; font-weight: 600; }
   font-size: 0.9rem;
 }
 .contatos-80-row-extra { display: none; }
+.contatos-80-row-extra.is-visible { display: table-row; }
 .contatos-80-toggle {
   margin-top: 0.8rem;
   border: 1px solid #2563eb;
@@ -418,6 +419,9 @@ table.data tfoot td { background: #1e2838; font-weight: 600; }
     text-transform: uppercase;
     letter-spacing: 0.04em;
     margin-bottom: 0.2rem;
+  }
+  table.data.contatos-80 tr.contatos-80-row-extra.is-visible {
+    display: block;
   }
 }
 @media (prefers-color-scheme: light) {

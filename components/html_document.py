@@ -37,7 +37,7 @@ _TAB_SCRIPT = """
       var extras = sec.querySelectorAll(".contatos-80-row-extra");
       var open = btn.getAttribute("aria-expanded") === "true";
       extras.forEach(function (tr) {
-        tr.style.display = open ? "none" : "";
+        tr.classList.toggle("is-visible", !open);
       });
       btn.setAttribute("aria-expanded", open ? "false" : "true");
       btn.textContent = open ? "Mostrar mais" : "Mostrar menos";
@@ -46,7 +46,7 @@ _TAB_SCRIPT = """
 
   var extrasInit = document.querySelectorAll(".contatos-80-row-extra");
   extrasInit.forEach(function (tr) {
-    tr.style.display = "none";
+    tr.classList.remove("is-visible");
   });
 })();
 """

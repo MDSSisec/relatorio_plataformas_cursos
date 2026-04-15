@@ -361,6 +361,7 @@ table.data tfoot td { background: #1e2838; font-weight: 600; }
   font-size: 0.9rem;
 }
 .contatos-80-row-extra { display: none; }
+.contatos-80-row-extra.is-visible { display: table-row; }
 .contatos-80-toggle {
   margin-top: 0.8rem;
   border: 1px solid #2563eb;
@@ -426,6 +427,9 @@ table.data tfoot td { background: #1e2838; font-weight: 600; }
     letter-spacing: 0.04em;
     margin-bottom: 0.2rem;
   }
+  table.data.contatos-80 tr.contatos-80-row-extra.is-visible {
+    display: block;
+  }
 }
 @media (prefers-color-scheme: light) {
   table.data thead th { background: #e5e7eb; }
@@ -442,7 +446,7 @@ table.data tfoot td { background: #1e2838; font-weight: 600; }
     <div class="tab-panel is-active" role="tabpanel" id="panel-gokursos" aria-labelledby="tab-gokursos" tabindex="0">
     <header class="cabecalho-relatorio">
       <h1>Relatório de progresso educacional</h1>
-      <p class="meta-linha">Arquivo: progress_130426162242.csv · Gerado em 14/04/2026 14:57 · Critério de conclusão: ≥ 100%</p>
+      <p class="meta-linha">Arquivo: progress_130426162242.csv · Gerado em 15/04/2026 10:25 · Critério de conclusão: ≥ 100%</p>
       <h2 class="titulo-notas">Notas metodológicas</h2>
       <ul class="lista-notas">
         <li>Uma pessoa = um nome único no CSV; várias linhas do mesmo nome são consolidadas.</li>
@@ -459,7 +463,7 @@ table.data tfoot td { background: #1e2838; font-weight: 600; }
         <div class="kpi"><span class="kpi-val">10.959</span><span class="kpi-lbl">Pessoas únicas</span></div>
         <div class="kpi"><span class="kpi-val">0</span><span class="kpi-lbl">Concluíram (≥ 100%)</span></div>
         <div class="kpi"><span class="kpi-val">2.607</span><span class="kpi-lbl">Nunca logou</span></div>
-        <div class="kpi"><span class="kpi-val">7.256</span><span class="kpi-lbl">Parados ≥ 90 dias</span></div>
+        <div class="kpi"><span class="kpi-val">7.283</span><span class="kpi-lbl">Parados ≥ 90 dias</span></div>
       </div>
     </div>
     
@@ -492,7 +496,7 @@ table.data tfoot td { background: #1e2838; font-weight: 600; }
       </section>
       <section class="block">
         <h2>Datas e inatividade</h2>
-        <table class="data"><thead><tr><th>Indicador</th><th>Valor</th></tr></thead><tbody><tr><td>Sem data válida (login e atividade)</td><td>2.607</td></tr><tr><td>Referência (hoje)</td><td>14/04/2026</td></tr><tr><td>Parados ≥ 30 dias (último login ou atividade)</td><td>8.141</td></tr><tr><td>Parados ≥ 60 dias (último login ou atividade)</td><td>7.575</td></tr><tr><td>Parados ≥ 90 dias (último login ou atividade)</td><td>7.256</td></tr></tbody></table>
+        <table class="data"><thead><tr><th>Indicador</th><th>Valor</th></tr></thead><tbody><tr><td>Sem data válida (login e atividade)</td><td>2.607</td></tr><tr><td>Referência (hoje)</td><td>15/04/2026</td></tr><tr><td>Parados ≥ 30 dias (último login ou atividade)</td><td>8.148</td></tr><tr><td>Parados ≥ 60 dias (último login ou atividade)</td><td>7.582</td></tr><tr><td>Parados ≥ 90 dias (último login ou atividade)</td><td>7.283</td></tr></tbody></table>
       </section>
     </div>
 
@@ -583,7 +587,7 @@ table.data tfoot td { background: #1e2838; font-weight: 600; }
     </div><div class="tab-panel" role="tabpanel" id="panel-instituto-exito" aria-labelledby="tab-instituto-exito" tabindex="0">
     <header class="cabecalho-relatorio">
       <h1>Relatório de progresso educacional</h1>
-      <p class="meta-linha">Arquivo: progress_instituto_exito.csv · Gerado em 14/04/2026 14:57 · Critério de conclusão: ≥ 100%</p>
+      <p class="meta-linha">Arquivo: progress_instituto_exito.csv · Gerado em 15/04/2026 10:25 · Critério de conclusão: ≥ 100%</p>
       <h2 class="titulo-notas">Notas metodológicas</h2>
       <ul class="lista-notas">
         <li>Uma pessoa = um nome único no CSV; várias linhas do mesmo nome são consolidadas.</li>
@@ -600,7 +604,7 @@ table.data tfoot td { background: #1e2838; font-weight: 600; }
         <div class="kpi"><span class="kpi-val">3.183</span><span class="kpi-lbl">Pessoas únicas</span></div>
         <div class="kpi"><span class="kpi-val">1.114</span><span class="kpi-lbl">Concluíram (≥ 100%)</span></div>
         <div class="kpi"><span class="kpi-val">0</span><span class="kpi-lbl">Nunca logou</span></div>
-        <div class="kpi"><span class="kpi-val">2.384</span><span class="kpi-lbl">Parados ≥ 90 dias</span></div>
+        <div class="kpi"><span class="kpi-val">2.411</span><span class="kpi-lbl">Parados ≥ 90 dias</span></div>
       </div>
     </div>
     
@@ -633,7 +637,7 @@ table.data tfoot td { background: #1e2838; font-weight: 600; }
       </section>
       <section class="block">
         <h2>Datas e inatividade</h2>
-        <table class="data"><thead><tr><th>Indicador</th><th>Valor</th></tr></thead><tbody><tr><td>Sem data válida (login e atividade)</td><td>0</td></tr><tr><td>Referência (hoje)</td><td>14/04/2026</td></tr><tr><td>Parados ≥ 30 dias (último login ou atividade)</td><td>3.095</td></tr><tr><td>Parados ≥ 60 dias (último login ou atividade)</td><td>2.597</td></tr><tr><td>Parados ≥ 90 dias (último login ou atividade)</td><td>2.384</td></tr></tbody></table>
+        <table class="data"><thead><tr><th>Indicador</th><th>Valor</th></tr></thead><tbody><tr><td>Sem data válida (login e atividade)</td><td>0</td></tr><tr><td>Referência (hoje)</td><td>15/04/2026</td></tr><tr><td>Parados ≥ 30 dias (último login ou atividade)</td><td>3.095</td></tr><tr><td>Parados ≥ 60 dias (último login ou atividade)</td><td>2.599</td></tr><tr><td>Parados ≥ 90 dias (último login ou atividade)</td><td>2.411</td></tr></tbody></table>
       </section>
     </div>
 
@@ -675,7 +679,7 @@ table.data tfoot td { background: #1e2838; font-weight: 600; }
       var extras = sec.querySelectorAll(".contatos-80-row-extra");
       var open = btn.getAttribute("aria-expanded") === "true";
       extras.forEach(function (tr) {
-        tr.style.display = open ? "none" : "";
+        tr.classList.toggle("is-visible", !open);
       });
       btn.setAttribute("aria-expanded", open ? "false" : "true");
       btn.textContent = open ? "Mostrar mais" : "Mostrar menos";
@@ -684,7 +688,7 @@ table.data tfoot td { background: #1e2838; font-weight: 600; }
 
   var extrasInit = document.querySelectorAll(".contatos-80-row-extra");
   extrasInit.forEach(function (tr) {
-    tr.style.display = "none";
+    tr.classList.remove("is-visible");
   });
 })();
 
