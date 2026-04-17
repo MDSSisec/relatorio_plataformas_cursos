@@ -100,7 +100,7 @@ def html_fragmento_relatorio(
         bloco_concluintes_recentes = f"""
         <section class="block">
           <h2>Últimos 10 concluintes (mais recentes)</h2>
-          {tabela_simples(["Nome", "E-mail", "Data"], linhas_concluintes)}
+          {tabela_simples(["Nome", "E-mail", "Telefone", "Data"], linhas_concluintes)}
         </section>
         """
     bloco_mapa = (

@@ -20,6 +20,23 @@ from components.parsing import (
     parse_progresso,
 )
 
+EXITO_TELEFONES_POR_NOME: dict[str, str] = {
+    "luciene vaneide ramos lavôr": "(93) 9 9210-3330",
+    "gabriel rodrigues da silva": "(61) 9 8140-3614",
+    "josé fábio teixeira barbosa": "(85) 9 9636-4167",
+    "ruan vidal silva": "(55) 9 9732-0101",
+    "tayane pacheco nascimento": "(92) 9 9321-3433",
+    "bruna de souza martins": "(21) 9 8098-4722",
+    "alana alberta de matos": "(62) 9 9299-1397",
+    "isaias costa neves": "(83) 9 9954-2558",
+    "laura silva": "(64) 9 9662-3042",
+    "samantha sthefany nunes da silva": "(92) 9 8604-0625",
+}
+
+
+def _nome_chave(nome: str) -> str:
+    return " ".join((nome or "").strip().lower().split())
+
 
 def analisar(caminho_csv: Path) -> Relatorio:
     hoje = date.today()
@@ -175,7 +192,7 @@ def analisar(caminho_csv: Path) -> Relatorio:
                 )
             )
 
-    concluintes_recentes: list[tuple[str, str, str]] = []
+    concluintes_recentes: list[tuple[str, str, str, str]] = []
     concluintes_base: list[tuple[datetime, str, str]] = []
     for nome, a in por_nome.items():
         if a.max_progresso < PROGRESSO_COMPLETO or a.max_login is None:
@@ -189,7 +206,10 @@ def analisar(caminho_csv: Path) -> Relatorio:
         )
     concluintes_base.sort(key=lambda item: item[0], reverse=True)
     for dt, nome, email in concluintes_base[:10]:
-        concluintes_recentes.append((nome, email, dt.strftime("%d/%m/%Y %H:%M")))
+        telefone = EXITO_TELEFONES_POR_NOME.get(_nome_chave(nome), "—")
+        concluintes_recentes.append(
+            (nome, email, telefone, dt.strftime("%d/%m/%Y %H:%M"))
+        )
 
     return Relatorio(
         gerado_em=datetime.now(),

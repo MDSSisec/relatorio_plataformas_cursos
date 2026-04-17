@@ -81,4 +81,4 @@ class Relatorio:
     por_uf: dict[str, int]
     ddd_nao_mapeado: int
     contatos_faixa_80: list[tuple[str, str, str]]
-    concluintes_recentes: list[tuple[str, str, str]]
+    concluintes_recentes: list[tuple[str, str, str, str]]
